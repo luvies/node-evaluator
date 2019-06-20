@@ -285,10 +285,10 @@
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^12.0.9"
 
-"@luvies/config@^1.3.5":
-  version "1.3.5"
-  resolved "https://registry.yarnpkg.com/@luvies/config/-/config-1.3.5.tgz#35de7c803c89700c9fcd199c6b9ec28e76dfd63b"
-  integrity sha512-Tc0//fQXOaV/gMJ3X4iDaoGrB4R39ZZeKBvYHjRMsXSMm6hngSDoUFhoolRkRkrc697PCb+nNQttKvOg9OKDzw==
+"@luvies/config@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@luvies/config/-/config-1.4.0.tgz#458d1f8ef043fc09bdb3cc0ee80027429a8d2178"
+  integrity sha512-jyONsWFeS0J2UCZURom5fMaooRqrLP6N1mLtuZRI/OHyKS5S3Qjet9MyxD82YVpRVPAp2/p8dBonCQ+W5Cnbgw==
 
 "@types/babel__core@^7.1.0":
   version "7.1.2"
