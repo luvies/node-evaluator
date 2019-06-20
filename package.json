@@ -15,6 +15,7 @@
     "test": "jest --expand",
     "test:ci": "jest --ci --expand",
     "test:watch": "jest --watch",
+    "test:coverage": "cat ./coverage/lcov.info | coveralls",
     "lint": "eslint --ext .js,.ts . && prettier --check '**/*.{ts,js,json,md,tsx,jsx,html,scss,css,yaml,yml,vue}'",
     "fix": "eslint --ext .js,.ts --fix . && prettier --check --write '**/*.{ts,js,json,md,tsx,jsx,html,scss,css,yaml,yml,vue}'",
     "postinstall": "rm -rf ./node_modules/jsep/typings/*"
@@ -25,6 +26,7 @@
     "@types/node": "^12.0.8",
     "@typescript-eslint/eslint-plugin": "^1.10.2",
     "@typescript-eslint/parser": "^1.10.2",
+    "coveralls": "^3.0.4",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^5.0.0",
     "eslint-plugin-prettier": "^3.1.0",
