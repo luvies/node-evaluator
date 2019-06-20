@@ -4,14 +4,8 @@ import { FunctionCall } from './function-call';
 export class ExpressionInfo {
   public static merge(infos: ExpressionInfo[]): ExpressionInfo {
     return new ExpressionInfo(
-      infos.reduce<FunctionCall[]>(
-        (prev, curr) => prev.concat(curr.functionCalls),
-        [],
-      ),
-      infos.reduce<ExpressionError[]>(
-        (prev, curr) => prev.concat(curr.errors),
-        [],
-      ),
+      infos.reduce<FunctionCall[]>((prev, curr) => prev.concat(curr.functionCalls), []),
+      infos.reduce<ExpressionError[]>((prev, curr) => prev.concat(curr.errors), []),
     );
   }
 

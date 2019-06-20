@@ -189,7 +189,7 @@ export class ExpressionInfoCollector {
       return new RuntimeValue();
     }
 
-    const args: (ExpressionReturnType | FunctionCall | RuntimeValue)[] = [];
+    const args: Array<ExpressionReturnType | FunctionCall | RuntimeValue> = [];
     for (const arg of expression.arguments) {
       args.push(this._tryResolveLiteral(arg));
     }
@@ -342,7 +342,7 @@ export class ExpressionInfoCollector {
 
   private _tryResolveArrayLiteral(
     expression: ArrayExpression,
-  ): (ExpressionReturnType | FunctionCall)[] | RuntimeValue {
+  ): Array<ExpressionReturnType | FunctionCall> | RuntimeValue {
     const values: ExpressionReturnType[] = [];
     for (const item of expression.elements) {
       const value = this._tryResolveLiteral(item);

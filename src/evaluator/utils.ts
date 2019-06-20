@@ -2,18 +2,11 @@ export interface TypeMap extends Record<string, ExpressionReturnType> {}
 
 export type SimpleType = string | number | boolean | undefined | null;
 
-export type FunctionType = (
-  ...args: any[]
-) => ExpressionReturnType | Promise<ExpressionReturnType>;
+export type FunctionType = (...args: any[]) => ExpressionReturnType | Promise<ExpressionReturnType>;
 
 export interface ArrayType extends Array<ExpressionReturnType> {}
 
-export type ExpressionReturnType =
-  | SimpleType
-  | ArrayType
-  | FunctionType
-  | TypeMap
-  | object;
+export type ExpressionReturnType = SimpleType | ArrayType | FunctionType | TypeMap | object;
 
 export interface ExpressionResult<T = ExpressionReturnType> {
   value: T;
@@ -21,10 +14,7 @@ export interface ExpressionResult<T = ExpressionReturnType> {
   functionCalls: number;
 }
 
-export type MemberCheckFn = (
-  value: ExpressionReturnType,
-  ident: string | number,
-) => boolean;
+export type MemberCheckFn = (value: ExpressionReturnType, ident: string | number) => boolean;
 
 export interface EvaluatorOptions {
   /**
