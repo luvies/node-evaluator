@@ -52,6 +52,12 @@ export class ExpressionEvaluator {
     this._valueFormatter = options.valueFormatter || String;
   }
 
+  public async eval(expression: string): Promise<ExpressionResult> {
+    const ast = jsep(expression);
+
+    return this.evalExpression(ast);
+  }
+
   public async evalExpression(expression: Expression): Promise<ExpressionResult> {
     switch (expression.type) {
       case 'ArrayExpression':

@@ -1,5 +1,6 @@
 import {
-  Evaluator,
+  EvaluatorOptions,
+  ExpressionEvaluator,
   ExpressionReturnType,
   contexts,
   objectOwnPropertyMemberCheck,
@@ -7,17 +8,17 @@ import {
   stringMethodMemberCheck,
 } from '../src';
 
-let evaluator: Evaluator;
+let opts: EvaluatorOptions;
 
 async function evl(expr: string): Promise<ExpressionReturnType> {
-  const result = await evaluator.eval(expr);
+  const result = await ExpressionEvaluator.eval(expr, opts);
   return result.value;
 }
 
 beforeEach(() => {
-  evaluator = new Evaluator({
+  opts = {
     context: {},
-  });
+  };
 });
 
 describe('Evaluator', () => {
@@ -68,7 +69,7 @@ describe('Evaluator', () => {
   });
 
   it('evaluates identifiers', async () => {
-    evaluator.options.context = {
+    opts.context = {
       a: 'a',
       b: 'b',
       c: 1,
@@ -82,7 +83,7 @@ describe('Evaluator', () => {
 
 describe('Evaluator member checks', () => {
   beforeEach(() => {
-    evaluator.options.context = {
+    opts.context = {
       l: (v: any) => v,
       a: {
         b: () => 'c',
@@ -97,7 +98,7 @@ describe('Evaluator member checks', () => {
   });
 
   it('handles object member checks', async () => {
-    evaluator.options.memberChecks = [objectOwnPropertyMemberCheck];
+    opts.memberChecks = [objectOwnPropertyMemberCheck];
 
     await expect(evl('a.b()')).resolves.toBe('c');
     await expect(evl('l("abc")[0]')).rejects.toThrow();
@@ -105,7 +106,7 @@ describe('Evaluator member checks', () => {
   });
 
   it('handles string member checks', async () => {
-    evaluator.options.memberChecks = [stringIndexMemberCheck];
+    opts.memberChecks = [stringIndexMemberCheck];
 
     await expect(evl('a.b()')).rejects.toThrow();
     await expect(evl('l("abc")[0]')).resolves.toBe('a');
@@ -113,7 +114,7 @@ describe('Evaluator member checks', () => {
   });
 
   it('handles string method member checks', async () => {
-    evaluator.options.memberChecks = [stringMethodMemberCheck];
+    opts.memberChecks = [stringMethodMemberCheck];
 
     await expect(evl('a.b()')).rejects.toThrow();
     await expect(evl('l("abc")[0]')).rejects.toThrow();
@@ -123,11 +124,11 @@ describe('Evaluator member checks', () => {
 
 describe('Evaluator contexts', () => {
   beforeEach(() => {
-    evaluator.options.memberChecks = [objectOwnPropertyMemberCheck];
+    opts.memberChecks = [objectOwnPropertyMemberCheck];
   });
 
   it('has a correct math context', async () => {
-    evaluator.options.context = {
+    opts.context = {
       Math: contexts.Math,
     };
 
@@ -135,7 +136,7 @@ describe('Evaluator contexts', () => {
   });
 
   it('has a correct string context', async () => {
-    evaluator.options.context = {
+    opts.context = {
       String: contexts.String,
     };
 
@@ -144,7 +145,7 @@ describe('Evaluator contexts', () => {
   });
 
   it('has a correct convert context', async () => {
-    evaluator.options.context = {
+    opts.context = {
       Convert: contexts.Convert,
     };
 
