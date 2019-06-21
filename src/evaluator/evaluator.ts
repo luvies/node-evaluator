@@ -24,24 +24,6 @@ import jsep, {
 } from 'jsep';
 
 export class ExpressionEvaluator {
-  public static async eval(
-    expression: string,
-    options: EvaluatorOptions,
-  ): Promise<ExpressionResult> {
-    const ast = jsep(expression);
-
-    return ExpressionEvaluator.evalExpression(ast, options);
-  }
-
-  public static async evalExpression(
-    expression: Expression,
-    options: EvaluatorOptions,
-  ): Promise<ExpressionResult> {
-    const expressionEvaluator = new ExpressionEvaluator(options);
-
-    return expressionEvaluator.evalExpression(expression);
-  }
-
   private readonly _context: TypeMap;
   private readonly _memberChecks?: Iterable<MemberCheckFn>;
   private readonly _valueFormatter: (value: any) => string;
@@ -52,13 +34,11 @@ export class ExpressionEvaluator {
     this._valueFormatter = options.valueFormatter || String;
   }
 
-  public async eval(expression: string): Promise<ExpressionResult> {
-    const ast = jsep(expression);
-
-    return this.evalExpression(ast);
+  public async eval(expression: string | Expression): Promise<ExpressionResult> {
+    return this._evalExpression(typeof expression === 'string' ? jsep(expression) : expression);
   }
 
-  public async evalExpression(expression: Expression): Promise<ExpressionResult> {
+  private async _evalExpression(expression: Expression): Promise<ExpressionResult> {
     switch (expression.type) {
       case 'ArrayExpression':
         return this._evalArrayExpression(expression);
@@ -100,7 +80,7 @@ export class ExpressionEvaluator {
       return result;
     } else {
       const elements = await Promise.all(
-        expression.elements.map(element => this.evalExpression(element)),
+        expression.elements.map(element => this._evalExpression(element)),
       );
 
       for (const element of elements) {
@@ -117,8 +97,8 @@ export class ExpressionEvaluator {
     expression: BinaryExpression,
   ): Promise<ExpressionResult<SimpleType>> {
     const [left, right] = await Promise.all([
-      this.evalExpression(expression.left),
-      this.evalExpression(expression.right),
+      this._evalExpression(expression.left),
+      this._evalExpression(expression.right),
     ]);
 
     let value: SimpleType;
@@ -229,8 +209,8 @@ export class ExpressionEvaluator {
 
   private async _evalCallExpression(expression: CallExpression): Promise<ExpressionResult> {
     const [fn, args] = await Promise.all([
-      this.evalExpression(expression.callee),
-      Promise.all(expression.arguments.map(argument => this.evalExpression(argument))),
+      this._evalExpression(expression.callee),
+      Promise.all(expression.arguments.map(argument => this._evalExpression(argument))),
     ]);
 
     if (typeof fn.value === 'function') {
@@ -248,7 +228,7 @@ export class ExpressionEvaluator {
     let result: ExpressionResult | undefined;
 
     for (const item of expression.body) {
-      result = await this.evalExpression(item);
+      result = await this._evalExpression(item);
     }
 
     if (result !== undefined) {
@@ -262,8 +242,8 @@ export class ExpressionEvaluator {
   private async _evalConditionalExpression(
     expression: ConditionalExpression,
   ): Promise<ExpressionResult> {
-    const test = await this.evalExpression(expression.test);
-    const result = await this.evalExpression(
+    const test = await this._evalExpression(expression.test);
+    const result = await this._evalExpression(
       test.value ? expression.consequent : expression.alternate,
     );
 
@@ -295,7 +275,7 @@ export class ExpressionEvaluator {
   }
 
   private async _evalLogicalExpression(expression: LogicalExpression): Promise<ExpressionResult> {
-    const left = await this.evalExpression(expression.left);
+    const left = await this._evalExpression(expression.left);
     let right: ExpressionResult | undefined;
     let value: ExpressionReturnType;
 
@@ -304,7 +284,7 @@ export class ExpressionEvaluator {
         if (left.value) {
           ({ value } = left);
         } else {
-          right = await this.evalExpression(expression.right);
+          right = await this._evalExpression(expression.right);
           value = right.value;
         }
         break;
@@ -312,7 +292,7 @@ export class ExpressionEvaluator {
         if (!left.value) {
           value = left.value;
         } else {
-          right = await this.evalExpression(expression.right);
+          right = await this._evalExpression(expression.right);
           value = right.value;
         }
         break;
@@ -329,9 +309,9 @@ export class ExpressionEvaluator {
 
   private async _evalMemberExpression(expression: MemberExpression): Promise<ExpressionResult> {
     const [value, property] = await Promise.all([
-      this.evalExpression(expression.object),
+      this._evalExpression(expression.object),
       expression.computed
-        ? this.evalExpression(expression.property)
+        ? this._evalExpression(expression.property)
         : {
             value: expression.property.name,
             nodes: 1,
@@ -385,7 +365,7 @@ export class ExpressionEvaluator {
   private async _evalUnaryExpression(
     expression: UnaryExpression,
   ): Promise<ExpressionResult<number | boolean>> {
-    const result = await this.evalExpression(expression.argument);
+    const result = await this._evalExpression(expression.argument);
     let value: number | boolean;
 
     switch (expression.operator) {

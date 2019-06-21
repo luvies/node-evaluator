@@ -11,7 +11,8 @@ import {
 let opts: EvaluatorOptions;
 
 async function evl(expr: string): Promise<ExpressionReturnType> {
-  const result = await ExpressionEvaluator.eval(expr, opts);
+  const evaluator = new ExpressionEvaluator(opts);
+  const result = await evaluator.eval(expr);
   return result.value;
 }
 
