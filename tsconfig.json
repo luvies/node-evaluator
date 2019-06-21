@@ -1,5 +1,5 @@
 {
-  "extends": "@luvies/config/tsconfig.base.json",
+  "extends": "@luvies/config/tsconfig.lib.json",
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
