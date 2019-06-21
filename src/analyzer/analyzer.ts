@@ -5,7 +5,7 @@ import {
   SimpleType,
   canAccessMember,
 } from '../evaluator';
-import { ExpressionInfo } from './expression-info';
+import { ExpressionAnalysis } from './analysis';
 import { FunctionCall } from './function-call';
 import { RuntimeValue } from './runtime-value';
 import jsep, {
@@ -21,7 +21,7 @@ import jsep, {
   UnaryExpression,
 } from 'jsep';
 
-export class ExpressionInfoCollector {
+export class ExpressionAnalyzer {
   private readonly _options?: EvaluatorOptions;
   private readonly _valueFormatter: (value: any) => string;
 
@@ -43,63 +43,63 @@ export class ExpressionInfoCollector {
     this._valueFormatter = valueFormatter || (evalOpts && evalOpts.valueFormatter) || String;
   }
 
-  public collect(expression: Expression | string): ExpressionInfo {
+  public analyze(expression: Expression | string): ExpressionAnalysis {
     this._visited = new WeakSet();
 
-    return this._collectExpression(typeof expression === 'string' ? jsep(expression) : expression);
+    return this._analyzeExpression(typeof expression === 'string' ? jsep(expression) : expression);
   }
 
-  //////////// Collection methods ////////////
+  //////////// Analysis methods ////////////
 
-  private _collectExpression(expression: Expression): ExpressionInfo {
+  private _analyzeExpression(expression: Expression): ExpressionAnalysis {
     switch (expression.type) {
       case 'ArrayExpression':
-        return this._collectArrayExpression(expression);
+        return this._analyzeArrayExpression(expression);
       case 'BinaryExpression':
-        return this._collectBinaryExpression(expression);
+        return this._analyzeBinaryExpression(expression);
       case 'CallExpression':
-        return this._collectCallExpression(expression);
+        return this._analyzeCallExpression(expression);
       case 'Compound':
-        return this._collectCompoundExpression(expression);
+        return this._analyzeCompoundExpression(expression);
       case 'ConditionalExpression':
-        return this._collectConditionalExpression(expression);
+        return this._analyzeConditionalExpression(expression);
       case 'Identifier':
-        return this._collectIdentifierExpression(expression);
+        return this._analyzeIdentifierExpression(expression);
       case 'Literal':
-        return this._collectLiteralExpression();
+        return this._analyzeLiteralExpression();
       case 'LogicalExpression':
-        return this._collectLogicalExpression(expression);
+        return this._analyzeLogicalExpression(expression);
       case 'MemberExpression':
-        return this._collectMemberExpression(expression);
+        return this._analyzeMemberExpression(expression);
       case 'ThisExpression':
-        return this._collectThisExpression();
+        return this._analyzeThisExpression();
       case 'UnaryExpression':
-        return this._collectUnaryExpression(expression);
+        return this._analyzeUnaryExpression(expression);
     }
   }
 
-  private _collectArrayExpression(expression: ArrayExpression): ExpressionInfo {
-    return ExpressionInfo.merge(
-      expression.elements.map(element => this._collectExpression(element)),
+  private _analyzeArrayExpression(expression: ArrayExpression): ExpressionAnalysis {
+    return ExpressionAnalysis.merge(
+      expression.elements.map(element => this._analyzeExpression(element)),
     );
   }
 
-  private _collectBinaryExpression(expression: BinaryExpression): ExpressionInfo {
-    return ExpressionInfo.merge([
-      this._collectExpression(expression.left),
-      this._collectExpression(expression.right),
+  private _analyzeBinaryExpression(expression: BinaryExpression): ExpressionAnalysis {
+    return ExpressionAnalysis.merge([
+      this._analyzeExpression(expression.left),
+      this._analyzeExpression(expression.right),
     ]);
   }
 
-  private _collectCallExpression(expression: CallExpression): ExpressionInfo {
+  private _analyzeCallExpression(expression: CallExpression): ExpressionAnalysis {
     const fn = this._tryResolveCallExpression(expression);
-    const callee = this._collectExpression(expression.callee);
-    const args = expression.arguments.map(arg => this._collectExpression(arg));
+    const callee = this._analyzeExpression(expression.callee);
+    const args = expression.arguments.map(arg => this._analyzeExpression(arg));
 
-    return ExpressionInfo.merge(
+    return ExpressionAnalysis.merge(
       fn instanceof FunctionCall
         ? [
-            ExpressionInfo.empty({
+            ExpressionAnalysis.empty({
               functionCalls: [fn],
             }),
             callee,
@@ -109,69 +109,71 @@ export class ExpressionInfoCollector {
     );
   }
 
-  private _collectCompoundExpression(expression: Compound): ExpressionInfo {
+  private _analyzeCompoundExpression(expression: Compound): ExpressionAnalysis {
     if (expression.body.length > 0) {
-      return ExpressionInfo.merge(expression.body.map(item => this._collectExpression(item)));
+      return ExpressionAnalysis.merge(expression.body.map(item => this._analyzeExpression(item)));
     } else {
-      return ExpressionInfo.empty({
+      return ExpressionAnalysis.empty({
         errors: [new ExpressionError('Compound expression cannot be empty')],
       });
     }
   }
 
-  private _collectConditionalExpression(expression: ConditionalExpression): ExpressionInfo {
-    return ExpressionInfo.merge([
-      this._collectExpression(expression.test),
-      this._collectExpression(expression.consequent),
-      this._collectExpression(expression.alternate),
+  private _analyzeConditionalExpression(expression: ConditionalExpression): ExpressionAnalysis {
+    return ExpressionAnalysis.merge([
+      this._analyzeExpression(expression.test),
+      this._analyzeExpression(expression.consequent),
+      this._analyzeExpression(expression.alternate),
     ]);
   }
 
-  private _collectIdentifierExpression(expression: Identifier): ExpressionInfo {
+  private _analyzeIdentifierExpression(expression: Identifier): ExpressionAnalysis {
     if (this._options) {
       const errors: ExpressionError[] = [];
       this._tryResolveFromIdentifier(expression, errors);
 
-      return ExpressionInfo.empty({
+      return ExpressionAnalysis.empty({
         errors,
       });
     } else {
-      return ExpressionInfo.empty();
+      return ExpressionAnalysis.empty();
     }
   }
 
-  private _collectLiteralExpression(): ExpressionInfo {
-    return ExpressionInfo.empty();
+  private _analyzeLiteralExpression(): ExpressionAnalysis {
+    return ExpressionAnalysis.empty();
   }
 
-  private _collectLogicalExpression(expression: LogicalExpression): ExpressionInfo {
-    return ExpressionInfo.merge([
-      this._collectExpression(expression.left),
-      this._collectExpression(expression.right),
+  private _analyzeLogicalExpression(expression: LogicalExpression): ExpressionAnalysis {
+    return ExpressionAnalysis.merge([
+      this._analyzeExpression(expression.left),
+      this._analyzeExpression(expression.right),
     ]);
   }
 
-  private _collectMemberExpression(expression: MemberExpression): ExpressionInfo {
+  private _analyzeMemberExpression(expression: MemberExpression): ExpressionAnalysis {
     // Resolve the errors for the member chain.
     // The result doesn't matter, only the error resolution here.
     const errors: ExpressionError[] = [];
     this._tryResolveFromMember(expression, errors);
 
-    return ExpressionInfo.merge([
-      ExpressionInfo.empty({
+    return ExpressionAnalysis.merge([
+      ExpressionAnalysis.empty({
         errors,
       }),
-      this._collectExpression(expression.object),
-      expression.computed ? this._collectExpression(expression.property) : ExpressionInfo.empty(),
+      this._analyzeExpression(expression.object),
+      expression.computed
+        ? this._analyzeExpression(expression.property)
+        : ExpressionAnalysis.empty(),
     ]);
   }
 
-  private _collectThisExpression(): ExpressionInfo {
-    return ExpressionInfo.empty();
+  private _analyzeThisExpression(): ExpressionAnalysis {
+    return ExpressionAnalysis.empty();
   }
 
-  private _collectUnaryExpression(expression: UnaryExpression): ExpressionInfo {
-    return this._collectExpression(expression.argument);
+  private _analyzeUnaryExpression(expression: UnaryExpression): ExpressionAnalysis {
+    return this._analyzeExpression(expression.argument);
   }
 
   //////////// Resolution methods ////////////

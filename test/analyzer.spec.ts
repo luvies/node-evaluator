@@ -1,15 +1,15 @@
-import { ExpressionInfoCollector, FunctionCall, RuntimeValue, standardMemberChecks } from '../src';
+import { ExpressionAnalyzer, FunctionCall, RuntimeValue, standardMemberChecks } from '../src';
 
-describe('Info collector', () => {
+describe('Analyzer', () => {
   it('analyses simple expressions without context', () => {
-    const info = new ExpressionInfoCollector();
+    const analyzer = new ExpressionAnalyzer();
 
-    let res = info.collect('a');
+    let res = analyzer.analyze('a');
 
     expect(res.functionCalls).toHaveLength(0);
     expect(res.errors).toHaveLength(0);
 
-    res = info.collect('b()');
+    res = analyzer.analyze('b()');
 
     expect(res.functionCalls).toHaveLength(1);
     expect(res.errors).toHaveLength(0);
@@ -18,12 +18,12 @@ describe('Info collector', () => {
     expect(res.functionCalls[0].args).toHaveLength(0);
     expect(res.functionCalls[0].path).toHaveLength(0);
 
-    res = info.collect('a.b');
+    res = analyzer.analyze('a.b');
 
     expect(res.functionCalls).toHaveLength(0);
     expect(res.errors).toHaveLength(0);
 
-    res = info.collect('a.b.c()');
+    res = analyzer.analyze('a.b.c()');
 
     expect(res.functionCalls).toHaveLength(1);
     expect(res.errors).toHaveLength(0);
@@ -32,12 +32,12 @@ describe('Info collector', () => {
     expect(res.functionCalls[0].args).toHaveLength(0);
     expect(res.functionCalls[0].path).toStrictEqual(['a', 'b']);
 
-    res = info.collect('a + c');
+    res = analyzer.analyze('a + c');
 
     expect(res.functionCalls).toHaveLength(0);
     expect(res.errors).toHaveLength(0);
 
-    res = info.collect('a * (b && c(1, 2))');
+    res = analyzer.analyze('a * (b && c(1, 2))');
 
     expect(res.functionCalls).toHaveLength(1);
     expect(res.errors).toHaveLength(0);
@@ -48,7 +48,7 @@ describe('Info collector', () => {
   });
 
   it('analyses simple expressions with simple context', () => {
-    const info = new ExpressionInfoCollector({
+    const analyzer = new ExpressionAnalyzer({
       evalOpts: {
         context: {
           a: '__a__',
@@ -57,12 +57,12 @@ describe('Info collector', () => {
       },
     });
 
-    let res = info.collect('a');
+    let res = analyzer.analyze('a');
 
     expect(res.functionCalls).toHaveLength(0);
     expect(res.errors).toHaveLength(0);
 
-    res = info.collect('b()');
+    res = analyzer.analyze('b()');
 
     expect(res.functionCalls).toHaveLength(1);
     expect(res.errors).toHaveLength(0);
@@ -71,12 +71,12 @@ describe('Info collector', () => {
     expect(res.functionCalls[0].args).toHaveLength(0);
     expect(res.functionCalls[0].path).toHaveLength(0);
 
-    res = info.collect('a.b');
+    res = analyzer.analyze('a.b');
 
     expect(res.functionCalls).toHaveLength(0);
     expect(res.errors).toHaveLength(1);
 
-    res = info.collect('a.b.c()');
+    res = analyzer.analyze('a.b.c()');
 
     expect(res.functionCalls).toHaveLength(1);
     expect(res.errors).toHaveLength(1);
@@ -85,12 +85,12 @@ describe('Info collector', () => {
     expect(res.functionCalls[0].args).toHaveLength(0);
     expect(res.functionCalls[0].path).toStrictEqual(['a', 'b']);
 
-    res = info.collect('a + c');
+    res = analyzer.analyze('a + c');
 
     expect(res.functionCalls).toHaveLength(0);
     expect(res.errors).toHaveLength(1);
 
-    res = info.collect('a * (b && c(1, 2))');
+    res = analyzer.analyze('a * (b && c(1, 2))');
 
     expect(res.functionCalls).toHaveLength(1);
     expect(res.errors).toHaveLength(1);
@@ -100,8 +100,8 @@ describe('Info collector', () => {
     expect(res.functionCalls[0].path).toHaveLength(0);
   });
 
-  it('analysis complex expressions with member access', () => {
-    const info = new ExpressionInfoCollector({
+  it('analyses complex expressions with member access', () => {
+    const analyzer = new ExpressionAnalyzer({
       evalOpts: {
         context: {
           a: {
@@ -113,12 +113,12 @@ describe('Info collector', () => {
       },
     });
 
-    let res = info.collect('a.b');
+    let res = analyzer.analyze('a.b');
 
     expect(res.functionCalls).toHaveLength(0);
     expect(res.errors).toHaveLength(0);
 
-    res = info.collect('a.b([1,2,2], c(3))');
+    res = analyzer.analyze('a.b([1,2,2], c(3))');
 
     expect(res.functionCalls).toHaveLength(2);
     expect(res.errors).toHaveLength(0);
@@ -136,7 +136,7 @@ describe('Info collector', () => {
     expect(res.functionCalls[1].path).toHaveLength(0);
     expect(res.functionCalls[1].args).toStrictEqual([3]);
 
-    res = info.collect('a.b.c()');
+    res = analyzer.analyze('a.b.c()');
 
     expect(res.functionCalls).toHaveLength(1);
     expect(res.errors).toHaveLength(1);
@@ -145,12 +145,12 @@ describe('Info collector', () => {
     expect(res.functionCalls[0].args).toHaveLength(0);
     expect(res.functionCalls[0].path).toStrictEqual(['a', 'b']);
 
-    res = info.collect('a / b + c');
+    res = analyzer.analyze('a / b + c');
 
     expect(res.functionCalls).toHaveLength(0);
     expect(res.errors).toHaveLength(1);
 
-    res = info.collect('a * (b && c(1, 2))');
+    res = analyzer.analyze('a * (b && c(1, 2))');
 
     expect(res.functionCalls).toHaveLength(1);
     expect(res.errors).toHaveLength(1);
@@ -159,7 +159,7 @@ describe('Info collector', () => {
     expect(res.functionCalls[0].args).toStrictEqual([1, 2]);
     expect(res.functionCalls[0].path).toHaveLength(0);
 
-    res = info.collect('a[d()].b()');
+    res = analyzer.analyze('a[d()].b()');
 
     expect(res.functionCalls).toHaveLength(2);
     expect(res.errors).toHaveLength(1);
