@@ -5,7 +5,7 @@ import {
   SimpleType,
   canAccessMember,
 } from '../evaluator';
-import { ExpressionAnalysis } from './analysis';
+import { ExpressionAnalysis } from './expression-analysis';
 import { FunctionCall } from './function-call';
 import { RuntimeValue } from './runtime-value';
 import jsep, {

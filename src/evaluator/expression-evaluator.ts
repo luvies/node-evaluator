@@ -8,7 +8,7 @@ import {
   TypeMap,
   canAccessMember,
 } from './utils';
-import { ExpressionError } from './error';
+import { ExpressionError } from './expression-error';
 import jsep, {
   ArrayExpression,
   BinaryExpression,
