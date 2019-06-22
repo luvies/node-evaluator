@@ -1,6 +1,6 @@
 import { ExpressionAnalyzer, FunctionCall, RuntimeValue, standardMemberChecks } from '../src';
 
-describe('Analyzer', () => {
+describe('Expression Analyzer', () => {
   it('analyses simple expressions without context', () => {
     const analyzer = new ExpressionAnalyzer();
 
