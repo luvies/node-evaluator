@@ -282,7 +282,7 @@ export class ExpressionEvaluator {
     switch (expression.operator) {
       case '||':
         if (left.value) {
-          ({ value } = left);
+          value = left.value;
         } else {
           right = await this._evalExpression(expression.right);
           value = right.value;
