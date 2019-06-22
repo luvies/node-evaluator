@@ -82,7 +82,7 @@ export type FunctionAnalysisConfig<T extends FunctionArgs<T>> = {
 
 export type FunctionAnalysis<T extends FunctionArgs<T>> = {
   [K in keyof T]: {
-    invalid: FunctionArg[];
+    invalid: FunctionArg[][];
     valid: Array<T[K]>;
   };
 };
@@ -97,8 +97,8 @@ interface FnAnalysisConf {
 }
 
 interface FnAnalysisRes {
-  invalid: FunctionArg[];
-  valid: any[];
+  invalid: FunctionArg[][];
+  valid: any[][];
 }
 
 export class FunctionAnalyzer<T extends FunctionArgs<T>> {
