@@ -1,6 +1,8 @@
 import { ExpressionReturnType, SimpleType } from '../evaluator';
 import { RuntimeValue } from './runtime-value';
 
+export type FunctionArg = ExpressionReturnType | FunctionCall | RuntimeValue;
+
 export class FunctionCall {
   public constructor(
     /**
@@ -12,7 +14,7 @@ export class FunctionCall {
      * All function calls in this are for reference only, as the main
      * function call array will contain every single found function.
      */
-    public args: Array<ExpressionReturnType | FunctionCall | RuntimeValue>,
+    public args: FunctionArg[],
     /**
      * The resolved path of the function. If the function is being used at
      * root-level, then this will be an empty array.
@@ -21,7 +23,7 @@ export class FunctionCall {
      * @example
      * `value()` -> `[]`
      * `Math.min()` -> `['Math']`
-     * `a[b || c].d()` -> `[RuntimeValue, 'd']`
+     * `a[b || c].d.e()` -> `[RuntimeValue, 'd']`
      */
     public path: [RuntimeValue, ...SimpleType[]] | SimpleType[],
   ) {}
