@@ -313,14 +313,16 @@ export class ExpressionAnalyzer {
             ctx = this._tryResolveFromIdentifier(expression.object);
             gotCtx = true;
             break;
+          case 'ThisExpression':
+            // 'this' is a special case, in that it refers to the context
+            // object directly.
+            return this._options.context[index];
         }
 
         if (ctx instanceof RuntimeValue) {
           return ctx;
         } else if (gotCtx) {
-          if (!this._options) {
-            return (ctx as any)[index];
-          } else if (canAccessMember(this._options.memberChecks, ctx, index)) {
+          if (canAccessMember(this._options.memberChecks, ctx, index)) {
             return (ctx as any)[index];
           } else {
             this._tryAddError(
