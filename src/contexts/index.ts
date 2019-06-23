@@ -1,6 +1,7 @@
-import { ConvertContext } from './convert';
-import { MathContext } from './math';
-import { StringContext } from './string';
+import { ConvertContext, ConvertFunctionArgs, convertFunctionAnalysisConfig } from './convert';
+import { FunctionAnalysisConfig } from '../analyzer';
+import { MathContext, MathFunctionArgs, mathFunctionAnalysisConfig } from './math';
+import { StringContext, StringFunctionArgs, stringFunctionAnalysisConfig } from './string';
 
 export * from './convert';
 export * from './math';
@@ -10,4 +11,12 @@ export const contexts = {
   Convert: ConvertContext,
   Math: MathContext,
   String: StringContext,
+};
+
+export type ContextArgs = ConvertFunctionArgs & MathFunctionArgs & StringFunctionArgs;
+
+export const contextFunctionAnalysisConfig: FunctionAnalysisConfig<ContextArgs> = {
+  ...convertFunctionAnalysisConfig,
+  ...mathFunctionAnalysisConfig,
+  ...stringFunctionAnalysisConfig,
 };
