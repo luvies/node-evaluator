@@ -64,6 +64,7 @@ describe('Function Analyzer', () => {
       a: [number];
       b: [string];
       c: [number, string, boolean];
+      x: [any];
     }
 
     const conf: FunctionAnalysisConfig<Funcs> = {
@@ -75,6 +76,9 @@ describe('Function Analyzer', () => {
       },
       c: {
         args: ['number', 'string', 'boolean'],
+      },
+      x: {
+        args: ['any'],
       },
     };
 
@@ -95,6 +99,10 @@ describe('Function Analyzer', () => {
         invalid: [],
         valid: [],
       },
+      x: {
+        invalid: [],
+        valid: [],
+      },
     });
 
     res = fna('b("1")');
@@ -109,6 +117,10 @@ describe('Function Analyzer', () => {
         valid: [['1']],
       },
       c: {
+        invalid: [],
+        valid: [],
+      },
+      x: {
         invalid: [],
         valid: [],
       },
@@ -129,6 +141,10 @@ describe('Function Analyzer', () => {
         invalid: [],
         valid: [[1, '2', true]],
       },
+      x: {
+        invalid: [],
+        valid: [],
+      },
     });
 
     res = fna('d(false, "unknown", 20)');
@@ -143,6 +159,10 @@ describe('Function Analyzer', () => {
         valid: [],
       },
       c: {
+        invalid: [],
+        valid: [],
+      },
+      x: {
         invalid: [],
         valid: [],
       },
@@ -163,6 +183,10 @@ describe('Function Analyzer', () => {
         invalid: [],
         valid: [],
       },
+      x: {
+        invalid: [],
+        valid: [],
+      },
     });
 
     res = fna('a(99, 98), b("a", "b", "c", "d"), c(100, "2 hundred", false, "other", ["values"])');
@@ -180,6 +204,10 @@ describe('Function Analyzer', () => {
         invalid: [],
         valid: [[100, '2 hundred', false, 'other', ['values']]],
       },
+      x: {
+        invalid: [],
+        valid: [],
+      },
     });
 
     res = fna('a([1, 2]), a("test"), b(13), c("2", 3, false)');
@@ -196,6 +224,31 @@ describe('Function Analyzer', () => {
       c: {
         invalid: [['2', 3, false]],
         valid: [],
+      },
+      x: {
+        invalid: [],
+        valid: [],
+      },
+    });
+
+    res = fna('x(1), x("a"), x(true), x([1, "b", false])');
+
+    expect(res).toStrictEqual({
+      a: {
+        invalid: [],
+        valid: [],
+      },
+      b: {
+        invalid: [],
+        valid: [],
+      },
+      c: {
+        invalid: [],
+        valid: [],
+      },
+      x: {
+        invalid: [],
+        valid: [[1], ['a'], [true], [[1, 'b', false]]],
       },
     });
   });

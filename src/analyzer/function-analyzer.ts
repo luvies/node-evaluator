@@ -7,12 +7,13 @@ export type FunctionArgs<T> = {
   [K in keyof T]: any[];
 };
 
-type FnBaseTypeString = 'string' | 'number' | 'boolean';
-type FnArrTypeString = 'string[]' | 'number[]' | 'boolean[]';
+type FnBaseTypeString = 'any' | 'string' | 'number' | 'boolean';
+type FnArrTypeString = 'any[]' | 'string[]' | 'number[]' | 'boolean[]';
 
 export type FunctionArgTypeString = FnBaseTypeString | FnArrTypeString;
 
 const fnArrTypeMap: Record<FnArrTypeString, FnBaseTypeString> = {
+  'any[]': 'any',
   'string[]': 'string',
   'number[]': 'number',
   'boolean[]': 'boolean',
@@ -201,6 +202,12 @@ export class FunctionAnalyzer<T extends FunctionArgs<T>> {
 
         let valid: boolean;
         switch (type) {
+          case 'any':
+            valid = true;
+            break;
+          case 'any[]':
+            valid = Array.isArray(val);
+            break;
           case 'string':
           case 'number':
           case 'boolean':
