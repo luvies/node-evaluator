@@ -1,6 +1,6 @@
 {
   "name": "@luvies/evaluator",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "A simple, secure expression evaluator",
   "main": "dist/index.js",
   "repository": "https://github.com/luvies/node-evaluator",
