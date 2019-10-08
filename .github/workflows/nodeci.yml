@@ -25,6 +25,13 @@ jobs:
           yarn test:ci
         env:
           CI: true
+      - name: Push coverage
+        run: yarn test:coverage
+        env:
+          CI: true
+          COVERALLS_SERVICE_NAME: Github Workflow
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+          COVERALLS_GIT_COMMIT: ${{ github.sha }}
 
   deploy:
     runs-on: ubuntu-latest
