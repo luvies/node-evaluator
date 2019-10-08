@@ -33,7 +33,6 @@ jobs:
           COVERALLS_SERVICE_NAME: Github Workflow
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
           COVERALLS_GIT_COMMIT: ${{ github.sha }}
-          CI_BRANCH: ${{ github.ref }}
 
   deploy:
     runs-on: ubuntu-latest

@@ -22,7 +22,7 @@
     "test": "jest --expand",
     "test:ci": "jest --ci --expand",
     "test:watch": "jest --watch",
-    "test:coverage": "cat ./coverage/lcov.info | coveralls",
+    "test:coverage": "./.github/scripts/coverage.sh",
     "lint": "./node_modules/@luvies/config/scripts/lint.sh",
     "fix": "./node_modules/@luvies/config/scripts/lint.sh fix",
     "postinstall": "rm -rf ./node_modules/jsep/typings/*"
