@@ -6,7 +6,8 @@ export type FunctionType = (...args: any[]) => ExpressionReturnType | Promise<Ex
 
 export interface ArrayType extends Array<ExpressionReturnType> {}
 
-export type ExpressionReturnType = SimpleType | ArrayType | FunctionType | TypeMap | Record<string, unknown>;
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type ExpressionReturnType = SimpleType | ArrayType | FunctionType | TypeMap | object;
 
 export interface ExpressionResult<T = ExpressionReturnType> {
   value: T;
