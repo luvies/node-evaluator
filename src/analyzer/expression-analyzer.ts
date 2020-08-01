@@ -4,10 +4,10 @@ import {
   ExpressionReturnType,
   SimpleType,
   canAccessMember,
-} from '../evaluator';
-import { ExpressionAnalysis } from './expression-analysis';
-import { FunctionCall } from './function-call';
-import { RuntimeValue } from './runtime-value';
+} from "../evaluator";
+import { ExpressionAnalysis } from "./expression-analysis";
+import { FunctionCall } from "./function-call";
+import { RuntimeValue } from "./runtime-value";
 import jsep, {
   ArrayExpression,
   BinaryExpression,
@@ -19,7 +19,7 @@ import jsep, {
   LogicalExpression,
   MemberExpression,
   UnaryExpression,
-} from 'jsep';
+} from "jsep";
 
 export class ExpressionAnalyzer {
   private readonly _options?: EvaluatorOptions;
@@ -40,61 +40,71 @@ export class ExpressionAnalyzer {
     valueFormatter?: (value: any) => string;
   } = {}) {
     this._options = evalOpts;
-    this._valueFormatter = (valueFormatter ?? (evalOpts?.valueFormatter)) ?? String;
+    this._valueFormatter = valueFormatter ?? evalOpts?.valueFormatter ?? String;
   }
 
   public analyze(expression: Expression | string): ExpressionAnalysis {
     this._visited = new WeakSet();
 
-    return this._analyzeExpression(typeof expression === 'string' ? jsep(expression) : expression);
+    return this._analyzeExpression(
+      typeof expression === "string" ? jsep(expression) : expression,
+    );
   }
 
   //////////// Analysis methods ////////////
 
   private _analyzeExpression(expression: Expression): ExpressionAnalysis {
     switch (expression.type) {
-      case 'ArrayExpression':
+      case "ArrayExpression":
         return this._analyzeArrayExpression(expression);
-      case 'BinaryExpression':
+      case "BinaryExpression":
         return this._analyzeBinaryExpression(expression);
-      case 'CallExpression':
+      case "CallExpression":
         return this._analyzeCallExpression(expression);
-      case 'Compound':
+      case "Compound":
         return this._analyzeCompoundExpression(expression);
-      case 'ConditionalExpression':
+      case "ConditionalExpression":
         return this._analyzeConditionalExpression(expression);
-      case 'Identifier':
+      case "Identifier":
         return this._analyzeIdentifierExpression(expression);
-      case 'Literal':
+      case "Literal":
         return this._analyzeLiteralExpression();
-      case 'LogicalExpression':
+      case "LogicalExpression":
         return this._analyzeLogicalExpression(expression);
-      case 'MemberExpression':
+      case "MemberExpression":
         return this._analyzeMemberExpression(expression);
-      case 'ThisExpression':
+      case "ThisExpression":
         return this._analyzeThisExpression();
-      case 'UnaryExpression':
+      case "UnaryExpression":
         return this._analyzeUnaryExpression(expression);
     }
   }
 
-  private _analyzeArrayExpression(expression: ArrayExpression): ExpressionAnalysis {
+  private _analyzeArrayExpression(
+    expression: ArrayExpression,
+  ): ExpressionAnalysis {
     return ExpressionAnalysis.merge(
-      expression.elements.map(element => this._analyzeExpression(element)),
+      expression.elements.map((element) => this._analyzeExpression(element)),
     );
   }
 
-  private _analyzeBinaryExpression(expression: BinaryExpression): ExpressionAnalysis {
+  private _analyzeBinaryExpression(
+    expression: BinaryExpression,
+  ): ExpressionAnalysis {
     return ExpressionAnalysis.merge([
       this._analyzeExpression(expression.left),
       this._analyzeExpression(expression.right),
     ]);
   }
 
-  private _analyzeCallExpression(expression: CallExpression): ExpressionAnalysis {
+  private _analyzeCallExpression(
+    expression: CallExpression,
+  ): ExpressionAnalysis {
     const fn = this._tryResolveCallExpression(expression);
     const callee = this._analyzeExpression(expression.callee);
-    const args = expression.arguments.map(arg => this._analyzeExpression(arg));
+    const args = expression.arguments.map((arg) =>
+      this._analyzeExpression(arg),
+    );
 
     return ExpressionAnalysis.merge(
       fn instanceof FunctionCall
@@ -111,15 +121,19 @@ export class ExpressionAnalyzer {
 
   private _analyzeCompoundExpression(expression: Compound): ExpressionAnalysis {
     if (expression.body.length > 0) {
-      return ExpressionAnalysis.merge(expression.body.map(item => this._analyzeExpression(item)));
+      return ExpressionAnalysis.merge(
+        expression.body.map((item) => this._analyzeExpression(item)),
+      );
     } else {
       return ExpressionAnalysis.empty({
-        errors: [new ExpressionError('Compound expression cannot be empty')],
+        errors: [new ExpressionError("Compound expression cannot be empty")],
       });
     }
   }
 
-  private _analyzeConditionalExpression(expression: ConditionalExpression): ExpressionAnalysis {
+  private _analyzeConditionalExpression(
+    expression: ConditionalExpression,
+  ): ExpressionAnalysis {
     return ExpressionAnalysis.merge([
       this._analyzeExpression(expression.test),
       this._analyzeExpression(expression.consequent),
@@ -127,7 +141,9 @@ export class ExpressionAnalyzer {
     ]);
   }
 
-  private _analyzeIdentifierExpression(expression: Identifier): ExpressionAnalysis {
+  private _analyzeIdentifierExpression(
+    expression: Identifier,
+  ): ExpressionAnalysis {
     if (this._options) {
       const errors: ExpressionError[] = [];
       this._tryResolveFromIdentifier(expression, errors);
@@ -144,14 +160,18 @@ export class ExpressionAnalyzer {
     return ExpressionAnalysis.empty();
   }
 
-  private _analyzeLogicalExpression(expression: LogicalExpression): ExpressionAnalysis {
+  private _analyzeLogicalExpression(
+    expression: LogicalExpression,
+  ): ExpressionAnalysis {
     return ExpressionAnalysis.merge([
       this._analyzeExpression(expression.left),
       this._analyzeExpression(expression.right),
     ]);
   }
 
-  private _analyzeMemberExpression(expression: MemberExpression): ExpressionAnalysis {
+  private _analyzeMemberExpression(
+    expression: MemberExpression,
+  ): ExpressionAnalysis {
     // Resolve the errors for the member chain.
     // The result doesn't matter, only the error resolution here.
     const errors: ExpressionError[] = [];
@@ -172,13 +192,17 @@ export class ExpressionAnalyzer {
     return ExpressionAnalysis.empty();
   }
 
-  private _analyzeUnaryExpression(expression: UnaryExpression): ExpressionAnalysis {
+  private _analyzeUnaryExpression(
+    expression: UnaryExpression,
+  ): ExpressionAnalysis {
     return this._analyzeExpression(expression.argument);
   }
 
   //////////// Resolution methods ////////////
 
-  private _tryResolveCallExpression(expression: CallExpression): FunctionCall | RuntimeValue {
+  private _tryResolveCallExpression(
+    expression: CallExpression,
+  ): FunctionCall | RuntimeValue {
     const path = this._tryResolveCallIdent(expression.callee);
 
     if (path.length === 0) {
@@ -187,7 +211,7 @@ export class ExpressionAnalyzer {
 
     const name = path.pop();
 
-    if (typeof name !== 'string') {
+    if (typeof name !== "string") {
       return new RuntimeValue();
     }
 
@@ -203,9 +227,9 @@ export class ExpressionAnalyzer {
     expression: Expression,
   ): [RuntimeValue, ...SimpleType[]] | SimpleType[] {
     switch (expression.type) {
-      case 'Identifier':
+      case "Identifier":
         return [expression.name];
-      case 'MemberExpression': {
+      case "MemberExpression": {
         let currIdent: RuntimeValue | SimpleType;
         if (expression.computed) {
           currIdent = this._tryResolveIndexLiteral(expression.property);
@@ -219,17 +243,25 @@ export class ExpressionAnalyzer {
 
         const subIdent = this._tryResolveCallIdent(expression.object);
 
-        return [...subIdent, currIdent] as [RuntimeValue, ...SimpleType[]] | SimpleType[];
+        return [...subIdent, currIdent] as
+          | [RuntimeValue, ...SimpleType[]]
+          | SimpleType[];
       }
       default:
         return [new RuntimeValue()];
     }
   }
 
-  private _tryResolveIndexLiteral(expression: Expression): SimpleType | RuntimeValue {
+  private _tryResolveIndexLiteral(
+    expression: Expression,
+  ): SimpleType | RuntimeValue {
     const lit = this._tryResolveLiteral(expression);
 
-    if (typeof lit === 'string' || typeof lit === 'number' || typeof lit === 'boolean') {
+    if (
+      typeof lit === "string" ||
+      typeof lit === "number" ||
+      typeof lit === "boolean"
+    ) {
       return lit;
     }
 
@@ -241,15 +273,15 @@ export class ExpressionAnalyzer {
     errors?: ExpressionError[],
   ): ExpressionReturnType | FunctionCall | RuntimeValue {
     switch (expression.type) {
-      case 'Literal':
+      case "Literal":
         return expression.value;
-      case 'Identifier':
+      case "Identifier":
         return this._tryResolveFromIdentifier(expression, errors);
-      case 'MemberExpression':
+      case "MemberExpression":
         return this._tryResolveFromMember(expression, errors);
-      case 'ArrayExpression':
+      case "ArrayExpression":
         return this._tryResolveArrayLiteral(expression);
-      case 'CallExpression':
+      case "CallExpression":
         return this._tryResolveCallExpression(expression);
     }
 
@@ -261,13 +293,20 @@ export class ExpressionAnalyzer {
     errors?: ExpressionError[],
   ): ExpressionReturnType | RuntimeValue {
     if (this._options) {
-      if (Object.prototype.hasOwnProperty.call(this._options.context, expression.name)) {
+      if (
+        Object.prototype.hasOwnProperty.call(
+          this._options.context,
+          expression.name,
+        )
+      ) {
         return this._options.context[expression.name];
       } else {
         this._tryAddError(
           expression,
           errors,
-          new ExpressionError(`Identifier (${this._valueFormatter(expression.name)}) not found`),
+          new ExpressionError(
+            `Identifier (${this._valueFormatter(expression.name)}) not found`,
+          ),
         );
       }
     }
@@ -294,7 +333,7 @@ export class ExpressionAnalyzer {
         index = expression.property.name;
       }
 
-      if (typeof index !== 'string' && typeof index !== 'number') {
+      if (typeof index !== "string" && typeof index !== "number") {
         this._tryAddError(
           expression,
           errors,
@@ -305,15 +344,15 @@ export class ExpressionAnalyzer {
         let gotCtx = false;
 
         switch (expression.object.type) {
-          case 'MemberExpression':
+          case "MemberExpression":
             ctx = this._tryResolveFromMember(expression.object, errors);
             gotCtx = true;
             break;
-          case 'Identifier':
+          case "Identifier":
             ctx = this._tryResolveFromIdentifier(expression.object);
             gotCtx = true;
             break;
-          case 'ThisExpression':
+          case "ThisExpression":
             // 'this' is a special case, in that it refers to the context
             // object directly.
             return this._options.context[index];

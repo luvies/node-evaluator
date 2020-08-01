@@ -1,22 +1,22 @@
-import { ExpressionAnalysis } from './expression-analysis';
-import { FunctionArg, FunctionCall } from './function-call';
-import { RuntimeValue } from './runtime-value';
-import { SimpleType } from '../evaluator';
+import { ExpressionAnalysis } from "./expression-analysis";
+import { FunctionArg, FunctionCall } from "./function-call";
+import { RuntimeValue } from "./runtime-value";
+import { SimpleType } from "../evaluator";
 
 export type FunctionArgs<T> = {
   [K in keyof T]: any[];
 };
 
-type FnBaseTypeString = 'any' | 'string' | 'number' | 'boolean';
-type FnArrTypeString = 'any[]' | 'string[]' | 'number[]' | 'boolean[]';
+type FnBaseTypeString = "any" | "string" | "number" | "boolean";
+type FnArrTypeString = "any[]" | "string[]" | "number[]" | "boolean[]";
 
 export type FunctionArgTypeString = FnBaseTypeString | FnArrTypeString;
 
 const fnArrTypeMap: Record<FnArrTypeString, FnBaseTypeString> = {
-  'any[]': 'any',
-  'string[]': 'string',
-  'number[]': 'number',
-  'boolean[]': 'boolean',
+  "any[]": "any",
+  "string[]": "string",
+  "number[]": "number",
+  "boolean[]": "boolean",
 };
 
 export type FunctionArgsValidator =
@@ -108,7 +108,9 @@ export class FunctionAnalyzer<T extends FunctionArgs<T>> {
   public analyze(exprAnalysis: ExpressionAnalysis): FunctionAnalysis<T> {
     const analysis: Record<string, FnAnalysisRes> = {};
 
-    for (const [keyName, config] of Object.entries<FunctionCallAnalysisConfig>(this._config)) {
+    for (const [keyName, config] of Object.entries<FunctionCallAnalysisConfig>(
+      this._config,
+    )) {
       const fn: FnAnalysisConf = {
         name: config.name ?? keyName,
         path: config.path ?? [],
@@ -138,7 +140,10 @@ export class FunctionAnalyzer<T extends FunctionArgs<T>> {
       if (
         fn.name !== name ||
         fn.path.length !== path.length ||
-        !path.reduce<boolean>((prev, curr, index) => prev && curr === fn.path[index], true)
+        !path.reduce<boolean>(
+          (prev, curr, index) => prev && curr === fn.path[index],
+          true,
+        )
       ) {
         continue;
       }
@@ -161,10 +166,11 @@ export class FunctionAnalyzer<T extends FunctionArgs<T>> {
       requiredArgsCount,
       functionCallArgValid,
       runtimeValueValid,
-    }: Omit<FnAnalysisConf, 'name' | 'path'>,
+    }: Omit<FnAnalysisConf, "name" | "path">,
   ): boolean {
     if (Array.isArray(args)) {
-      requiredArgsCount = requiredArgsCount === undefined ? args.length : requiredArgsCount;
+      requiredArgsCount =
+        requiredArgsCount === undefined ? args.length : requiredArgsCount;
 
       if (fn.args.length < requiredArgsCount) {
         return false;
@@ -202,20 +208,20 @@ export class FunctionAnalyzer<T extends FunctionArgs<T>> {
 
         let valid: boolean;
         switch (type) {
-          case 'any':
+          case "any":
             valid = true;
             break;
-          case 'any[]':
+          case "any[]":
             valid = Array.isArray(val);
             break;
-          case 'string':
-          case 'number':
-          case 'boolean':
+          case "string":
+          case "number":
+          case "boolean":
             valid = typeof val === type;
             break;
-          case 'string[]':
-          case 'number[]':
-          case 'boolean[]':
+          case "string[]":
+          case "number[]":
+          case "boolean[]":
             valid = this._validTypedArray(val, fnArrTypeMap[type]);
             break;
           default:

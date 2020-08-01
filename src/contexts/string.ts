@@ -1,5 +1,5 @@
-import { FunctionAnalysisConfig } from '../analyzer';
-import { TypeMap } from '../evaluator';
+import { FunctionAnalysisConfig } from "../analyzer";
+import { TypeMap } from "../evaluator";
 
 function regex(pattern: string, flags?: string): RegExp {
   return new RegExp(pattern, flags);
@@ -10,11 +10,16 @@ export const StringContext: TypeMap = {
 };
 
 export interface StringFunctionArgs {
-  'String.regex': [string, string | undefined];
+  "String.regex": [string, string | undefined];
 }
 
-const path = ['String'];
+const path = ["String"];
 
 export const stringFunctionAnalysisConfig: FunctionAnalysisConfig<StringFunctionArgs> = {
-  'String.regex': { path, name: 'regex', args: ['string', 'string'], requiredArgsCount: 1 },
+  "String.regex": {
+    path,
+    name: "regex",
+    args: ["string", "string"],
+    requiredArgsCount: 1,
+  },
 };

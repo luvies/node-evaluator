@@ -1,5 +1,5 @@
-import { FunctionAnalysisConfig } from '../analyzer';
-import { TypeMap } from '../evaluator';
+import { FunctionAnalysisConfig } from "../analyzer";
+import { TypeMap } from "../evaluator";
 
 function toString(value: unknown): string {
   return String(value);
@@ -15,13 +15,13 @@ export const ConvertContext: TypeMap = {
 };
 
 export interface ConvertFunctionArgs {
-  'Convert.toString': [any];
-  'Convert.toNumber': [any];
+  "Convert.toString": [any];
+  "Convert.toNumber": [any];
 }
 
-const path = ['Convert'];
+const path = ["Convert"];
 
 export const convertFunctionAnalysisConfig: FunctionAnalysisConfig<ConvertFunctionArgs> = {
-  'Convert.toString': { path, name: 'toString', args: ['any'] },
-  'Convert.toNumber': { path, name: 'toNumber', args: ['any'] },
+  "Convert.toString": { path, name: "toString", args: ["any"] },
+  "Convert.toNumber": { path, name: "toNumber", args: ["any"] },
 };

@@ -7,11 +7,14 @@ import {
   FunctionArgs,
   FunctionCall,
   RuntimeValue,
-} from '../src';
+} from "../src";
 
 function fnAnalyze<T extends FunctionArgs<T>>(
   expr: string,
-  { evalOpts, conf }: { evalOpts?: EvaluatorOptions; conf: FunctionAnalysisConfig<T> },
+  {
+    evalOpts,
+    conf,
+  }: { evalOpts?: EvaluatorOptions; conf: FunctionAnalysisConfig<T> },
 ): FunctionAnalysis<T> {
   const analyzer = new ExpressionAnalyzer({ evalOpts });
   const fnAnalyzer = new FunctionAnalyzer<T>(conf);
@@ -20,27 +23,28 @@ function fnAnalyze<T extends FunctionArgs<T>>(
   return fnAnalyzer.analyze(analysis);
 }
 
-describe('Function Analyzer', () => {
-  it('handles simple expressions', () => {
+describe("Function Analyzer", () => {
+  it("handles simple expressions", () => {
     interface Funcs {
       fn: [number, string];
     }
 
     const conf: FunctionAnalysisConfig<Funcs> = {
       fn: {
-        args: ['number', 'string'],
+        args: ["number", "string"],
       },
     };
 
-    const fna = (expr: string): FunctionAnalysis<Funcs> => fnAnalyze(expr, { conf });
+    const fna = (expr: string): FunctionAnalysis<Funcs> =>
+      fnAnalyze(expr, { conf });
 
-    let res = fna('true');
+    let res = fna("true");
 
     expect(res).toStrictEqual({
       fn: { invalid: [], valid: [] },
     });
 
-    res = fna('1 + 2');
+    res = fna("1 + 2");
 
     expect(res).toStrictEqual({
       fn: { invalid: [], valid: [] },
@@ -52,14 +56,14 @@ describe('Function Analyzer', () => {
       fn: { invalid: [], valid: [] },
     });
 
-    res = fna('[1, 2, 3, 4]');
+    res = fna("[1, 2, 3, 4]");
 
     expect(res).toStrictEqual({
       fn: { invalid: [], valid: [] },
     });
   });
 
-  it('analyses simple functions', () => {
+  it("analyses simple functions", () => {
     interface Funcs {
       a: [number];
       b: [string];
@@ -69,22 +73,23 @@ describe('Function Analyzer', () => {
 
     const conf: FunctionAnalysisConfig<Funcs> = {
       a: {
-        args: ['number'],
+        args: ["number"],
       },
       b: {
-        args: ['string'],
+        args: ["string"],
       },
       c: {
-        args: ['number', 'string', 'boolean'],
+        args: ["number", "string", "boolean"],
       },
       x: {
-        args: ['any'],
+        args: ["any"],
       },
     };
 
-    const fna = (expr: string): FunctionAnalysis<Funcs> => fnAnalyze(expr, { conf });
+    const fna = (expr: string): FunctionAnalysis<Funcs> =>
+      fnAnalyze(expr, { conf });
 
-    let res = fna('a(1)');
+    let res = fna("a(1)");
 
     expect(res).toStrictEqual({
       a: {
@@ -114,7 +119,7 @@ describe('Function Analyzer', () => {
       },
       b: {
         invalid: [],
-        valid: [['1']],
+        valid: [["1"]],
       },
       c: {
         invalid: [],
@@ -139,7 +144,7 @@ describe('Function Analyzer', () => {
       },
       c: {
         invalid: [],
-        valid: [[1, '2', true]],
+        valid: [[1, "2", true]],
       },
       x: {
         invalid: [],
@@ -177,7 +182,7 @@ describe('Function Analyzer', () => {
       },
       b: {
         invalid: [],
-        valid: [['12']],
+        valid: [["12"]],
       },
       c: {
         invalid: [],
@@ -189,7 +194,9 @@ describe('Function Analyzer', () => {
       },
     });
 
-    res = fna('a(99, 98), b("a", "b", "c", "d"), c(100, "2 hundred", false, "other", ["values"])');
+    res = fna(
+      'a(99, 98), b("a", "b", "c", "d"), c(100, "2 hundred", false, "other", ["values"])',
+    );
 
     expect(res).toStrictEqual({
       a: {
@@ -198,11 +205,11 @@ describe('Function Analyzer', () => {
       },
       b: {
         invalid: [],
-        valid: [['a', 'b', 'c', 'd']],
+        valid: [["a", "b", "c", "d"]],
       },
       c: {
         invalid: [],
-        valid: [[100, '2 hundred', false, 'other', ['values']]],
+        valid: [[100, "2 hundred", false, "other", ["values"]]],
       },
       x: {
         invalid: [],
@@ -214,7 +221,7 @@ describe('Function Analyzer', () => {
 
     expect(res).toStrictEqual({
       a: {
-        invalid: [[[1, 2]], ['test']],
+        invalid: [[[1, 2]], ["test"]],
         valid: [],
       },
       b: {
@@ -222,7 +229,7 @@ describe('Function Analyzer', () => {
         valid: [],
       },
       c: {
-        invalid: [['2', 3, false]],
+        invalid: [["2", 3, false]],
         valid: [],
       },
       x: {
@@ -248,12 +255,12 @@ describe('Function Analyzer', () => {
       },
       x: {
         invalid: [],
-        valid: [[1], ['a'], [true], [[1, 'b', false]]],
+        valid: [[1], ["a"], [true], [[1, "b", false]]],
       },
     });
   });
 
-  it('handles array arguments', () => {
+  it("handles array arguments", () => {
     interface Funcs {
       a: [number[]];
       b: [string[]];
@@ -262,13 +269,13 @@ describe('Function Analyzer', () => {
 
     const conf: FunctionAnalysisConfig<Funcs> = {
       a: {
-        args: ['number[]'],
+        args: ["number[]"],
       },
       b: {
-        args: ['string[]'],
+        args: ["string[]"],
       },
       c: {
-        args: ['boolean[]'],
+        args: ["boolean[]"],
       },
     };
 
@@ -279,21 +286,21 @@ describe('Function Analyzer', () => {
 
     expect(res).toStrictEqual({
       a: {
-        invalid: [[[1, '2']], [1]],
+        invalid: [[[1, "2"]], [1]],
         valid: [[[1, 2, 3, 4]]],
       },
       b: {
-        invalid: [[['a', 2]], ['a']],
-        valid: [[['a', 'b', 'c']]],
+        invalid: [[["a", 2]], ["a"]],
+        valid: [[["a", "b", "c"]]],
       },
       c: {
-        invalid: [[[false, 'true']], [true]],
+        invalid: [[[false, "true"]], [true]],
         valid: [[[true, false]]],
       },
     });
   });
 
-  it('handles function checkers', () => {
+  it("handles function checkers", () => {
     interface Funcs {
       a: [number];
       b: [string, boolean];
@@ -301,10 +308,10 @@ describe('Function Analyzer', () => {
 
     const conf: FunctionAnalysisConfig<Funcs> = {
       a: {
-        args: [arg => arg === 1],
+        args: [(arg) => arg === 1],
       },
       b: {
-        args: ([arg0, arg1]) => arg0 === 'a' && arg1 === true,
+        args: ([arg0, arg1]) => arg0 === "a" && arg1 === true,
       },
     };
 
@@ -312,24 +319,24 @@ describe('Function Analyzer', () => {
 
     expect(res).toStrictEqual({
       a: {
-        invalid: [['a']],
+        invalid: [["a"]],
         valid: [[1]],
       },
       b: {
-        invalid: [[1, 'b']],
-        valid: [['a', true]],
+        invalid: [[1, "b"]],
+        valid: [["a", true]],
       },
     });
   });
 
-  it('handles optional arguments', () => {
+  it("handles optional arguments", () => {
     interface Funcs {
       a: [number, number, string | undefined];
     }
 
     const conf: FunctionAnalysisConfig<Funcs> = {
       a: {
-        args: ['number', 'number', 'string'],
+        args: ["number", "number", "string"],
         requiredArgsCount: 2,
       },
     };
@@ -342,20 +349,25 @@ describe('Function Analyzer', () => {
     expect(res).toStrictEqual({
       a: {
         invalid: [[5]],
-        valid: [[1, 2, '3'], [9, 8], [12, 13, '14', '15'], [11, 22, undefined]],
+        valid: [
+          [1, 2, "3"],
+          [9, 8],
+          [12, 13, "14", "15"],
+          [11, 22, undefined],
+        ],
       },
     });
   });
 
-  it('handles alternate names', () => {
+  it("handles alternate names", () => {
     interface Funcs {
       a: [number, number, string | undefined];
     }
 
     const conf: FunctionAnalysisConfig<Funcs> = {
       a: {
-        name: 'b',
-        args: ['number', 'string'],
+        name: "b",
+        args: ["number", "string"],
       },
     };
 
@@ -364,46 +376,49 @@ describe('Function Analyzer', () => {
     expect(res).toStrictEqual({
       a: {
         invalid: [[5]],
-        valid: [[1, '2']],
+        valid: [[1, "2"]],
       },
     });
   });
 
-  it('handles paths', () => {
+  it("handles paths", () => {
     interface Funcs {
       a: [number];
     }
 
     const conf: FunctionAnalysisConfig<Funcs> = {
       a: {
-        path: ['c', 'b'],
-        args: ['number'],
+        path: ["c", "b"],
+        args: ["number"],
       },
     };
 
-    const res = fnAnalyze('c.b.a(1), c.b.a(9, 8), c.b.a("test"), b.c.a(5), a(12)', { conf });
+    const res = fnAnalyze(
+      'c.b.a(1), c.b.a(9, 8), c.b.a("test"), b.c.a(5), a(12)',
+      { conf },
+    );
 
     expect(res).toStrictEqual({
       a: {
-        invalid: [['test']],
+        invalid: [["test"]],
         valid: [[1], [9, 8]],
       },
     });
   });
 
-  it('handles function calls', () => {
+  it("handles function calls", () => {
     interface Funcs {
       a: [number];
     }
 
     const conf: FunctionAnalysisConfig<Funcs> = {
       a: {
-        args: ['number'],
+        args: ["number"],
       },
     };
 
-    const expr = 'a(1), a(b()), a(5, b()), a(b(), 9)';
-    const bCall = new FunctionCall('b', [], []);
+    const expr = "a(1), a(b()), a(5, b()), a(b(), 9)";
+    const bCall = new FunctionCall("b", [], []);
 
     let res = fnAnalyze(expr, { conf });
 
@@ -426,18 +441,18 @@ describe('Function Analyzer', () => {
     });
   });
 
-  it('handles runtime values', () => {
+  it("handles runtime values", () => {
     interface Funcs {
       a: [number];
     }
 
     const conf: FunctionAnalysisConfig<Funcs> = {
       a: {
-        args: ['number'],
+        args: ["number"],
       },
     };
 
-    const expr = 'a(1), a(1 + 2), a(5, 3 - 4), a(7 * 8, 9)';
+    const expr = "a(1), a(1 + 2), a(5, 3 - 4), a(7 * 8, 9)";
     const rval = new RuntimeValue();
 
     let res = fnAnalyze(expr, { conf });

@@ -1,4 +1,4 @@
-import { ExpressionReturnType, MemberCheckFn } from './utils';
+import { ExpressionReturnType, MemberCheckFn } from "./utils";
 
 /**
  * Checks whether the identifier exists as an own property on the
@@ -8,40 +8,43 @@ export function objectOwnPropertyMemberCheck(
   value: ExpressionReturnType,
   ident: string | number,
 ): boolean {
-  return typeof value === 'object' && Object.prototype.hasOwnProperty.call(value, ident);
+  return (
+    typeof value === "object" &&
+    Object.prototype.hasOwnProperty.call(value, ident)
+  );
 }
 
 const stringMethods = new Set([
-  'charAt',
-  'charCodeAt',
-  'codePointAt',
-  'concat',
-  'includes',
-  'endsWith',
-  'indexOf',
-  'lastIndexOf',
-  'localeCompare',
-  'match',
-  'matchAll',
-  'normalize',
-  'padEnd',
-  'padStart',
-  'repeat',
-  'replace',
-  'search',
-  'slice',
-  'split',
-  'startsWith',
-  'substring',
-  'toLocaleLowerCase',
-  'toLocaleUpperCase',
-  'toLowerCase',
-  'toUpperCase',
-  'trim',
-  'trimStart',
-  'trimLeft',
-  'trimEnd',
-  'trimRight',
+  "charAt",
+  "charCodeAt",
+  "codePointAt",
+  "concat",
+  "includes",
+  "endsWith",
+  "indexOf",
+  "lastIndexOf",
+  "localeCompare",
+  "match",
+  "matchAll",
+  "normalize",
+  "padEnd",
+  "padStart",
+  "repeat",
+  "replace",
+  "search",
+  "slice",
+  "split",
+  "startsWith",
+  "substring",
+  "toLocaleLowerCase",
+  "toLocaleUpperCase",
+  "toLowerCase",
+  "toUpperCase",
+  "trim",
+  "trimStart",
+  "trimLeft",
+  "trimEnd",
+  "trimRight",
 ]);
 
 /**
@@ -52,7 +55,11 @@ export function stringMethodMemberCheck(
   value: ExpressionReturnType,
   ident: string | number,
 ): boolean {
-  return typeof value === 'string' && typeof ident === 'string' && stringMethods.has(ident);
+  return (
+    typeof value === "string" &&
+    typeof ident === "string" &&
+    stringMethods.has(ident)
+  );
 }
 
 /**
@@ -64,8 +71,8 @@ export function stringIndexMemberCheck(
   ident: string | number,
 ): boolean {
   return (
-    typeof value === 'string' &&
-    typeof ident === 'number' &&
+    typeof value === "string" &&
+    typeof ident === "number" &&
     Object.prototype.hasOwnProperty.call(value, ident)
   );
 }

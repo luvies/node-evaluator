@@ -1,71 +1,75 @@
-declare module 'jsep' {
+declare module "jsep" {
   namespace jsep {
     export interface ArrayExpression {
-      type: 'ArrayExpression';
+      type: "ArrayExpression";
       elements: Expression[];
     }
 
     export interface BinaryExpression {
-      type: 'BinaryExpression';
+      type: "BinaryExpression";
       operator: string;
       left: Expression;
       right: Expression;
     }
 
     export interface CallExpression {
-      type: 'CallExpression';
+      type: "CallExpression";
       arguments: Expression[];
       callee: Expression;
     }
 
     export interface Compound {
-      type: 'Compound';
+      type: "Compound";
       body: Expression[];
     }
 
     export interface ConditionalExpression {
-      type: 'ConditionalExpression';
+      type: "ConditionalExpression";
       test: Expression;
       consequent: Expression;
       alternate: Expression;
     }
 
     export interface Identifier {
-      type: 'Identifier';
+      type: "Identifier";
       name: string;
     }
 
     export interface Literal {
-      type: 'Literal';
+      type: "Literal";
       value: boolean | number | string;
       raw: string;
     }
 
     export interface LogicalExpression {
-      type: 'LogicalExpression';
+      type: "LogicalExpression";
       operator: string;
       left: Expression;
       right: Expression;
     }
 
     interface BaseMemberExpression<T, U> {
-      type: 'MemberExpression';
+      type: "MemberExpression";
       computed: T;
       object: Expression;
       property: U;
     }
 
-    interface DirectMemberExpression extends BaseMemberExpression<false, Identifier> {}
-    interface ComputedMemberExpression extends BaseMemberExpression<true, Expression> {}
+    interface DirectMemberExpression
+      extends BaseMemberExpression<false, Identifier> {}
+    interface ComputedMemberExpression
+      extends BaseMemberExpression<true, Expression> {}
 
-    export type MemberExpression = DirectMemberExpression | ComputedMemberExpression;
+    export type MemberExpression =
+      | DirectMemberExpression
+      | ComputedMemberExpression;
 
     export interface ThisExpression {
-      type: 'ThisExpression';
+      type: "ThisExpression";
     }
 
     export interface UnaryExpression {
-      type: 'UnaryExpression';
+      type: "UnaryExpression";
       operator: string;
       argument: Expression;
       prefix: boolean;

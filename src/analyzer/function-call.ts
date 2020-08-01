@@ -1,5 +1,5 @@
-import { ExpressionReturnType, SimpleType } from '../evaluator';
-import { RuntimeValue } from './runtime-value';
+import { ExpressionReturnType, SimpleType } from "../evaluator";
+import { RuntimeValue } from "./runtime-value";
 
 export type FunctionArg = ExpressionReturnType | FunctionCall | RuntimeValue;
 
