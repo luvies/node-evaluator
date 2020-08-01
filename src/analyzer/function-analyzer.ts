@@ -110,8 +110,8 @@ export class FunctionAnalyzer<T extends FunctionArgs<T>> {
 
     for (const [keyName, config] of Object.entries<FunctionCallAnalysisConfig>(this._config)) {
       const fn: FnAnalysisConf = {
-        name: config.name || keyName,
-        path: config.path || [],
+        name: config.name ?? keyName,
+        path: config.path ?? [],
         args: config.args,
         requiredArgsCount: config.requiredArgsCount,
         functionCallArgValid: config.functionCallArgValid,

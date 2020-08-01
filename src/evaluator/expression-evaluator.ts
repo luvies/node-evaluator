@@ -31,7 +31,7 @@ export class ExpressionEvaluator {
   public constructor(options: EvaluatorOptions) {
     this._context = options.context;
     this._memberChecks = options.memberChecks;
-    this._valueFormatter = options.valueFormatter || String;
+    this._valueFormatter = options.valueFormatter ?? String;
   }
 
   public async eval(expression: string | Expression): Promise<ExpressionResult> {

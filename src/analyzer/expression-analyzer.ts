@@ -40,7 +40,7 @@ export class ExpressionAnalyzer {
     valueFormatter?: (value: any) => string;
   } = {}) {
     this._options = evalOpts;
-    this._valueFormatter = valueFormatter || (evalOpts && evalOpts.valueFormatter) || String;
+    this._valueFormatter = (valueFormatter ?? (evalOpts?.valueFormatter)) ?? String;
   }
 
   public analyze(expression: Expression | string): ExpressionAnalysis {

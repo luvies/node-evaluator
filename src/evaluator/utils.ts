@@ -6,7 +6,7 @@ export type FunctionType = (...args: any[]) => ExpressionReturnType | Promise<Ex
 
 export interface ArrayType extends Array<ExpressionReturnType> {}
 
-export type ExpressionReturnType = SimpleType | ArrayType | FunctionType | TypeMap | object;
+export type ExpressionReturnType = SimpleType | ArrayType | FunctionType | TypeMap | Record<string, unknown>;
 
 export interface ExpressionResult<T = ExpressionReturnType> {
   value: T;

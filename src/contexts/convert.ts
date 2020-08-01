@@ -1,11 +1,11 @@
 import { FunctionAnalysisConfig } from '../analyzer';
 import { TypeMap } from '../evaluator';
 
-function toString(value: any): string {
+function toString(value: unknown): string {
   return String(value);
 }
 
-function toNumber(value: any): number {
+function toNumber(value: unknown): number {
   return Number(value);
 }
 
