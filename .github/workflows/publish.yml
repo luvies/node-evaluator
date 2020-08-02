@@ -42,10 +42,10 @@ jobs:
       - name: Test
         run: pnpm test
 
-      - name: Publish to npm
-        run: pnpm publish --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # - name: Publish to npm
+      #   run: pnpm publish --no-git-checks
+      #   env:
+      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Setup node 14 with GitHub registry
         uses: actions/setup-node@v1
