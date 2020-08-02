@@ -1,15 +1,4 @@
 import {
-  ArrayType,
-  EvaluatorOptions,
-  ExpressionResult,
-  ExpressionReturnType,
-  MemberCheckFn,
-  SimpleType,
-  TypeMap,
-  canAccessMember,
-} from "./utils";
-import { ExpressionError } from "./expression-error";
-import jsep, {
   ArrayExpression,
   BinaryExpression,
   CallExpression,
@@ -21,7 +10,19 @@ import jsep, {
   LogicalExpression,
   MemberExpression,
   UnaryExpression,
-} from "jsep";
+} from "../jsep-types";
+import {
+  ArrayType,
+  EvaluatorOptions,
+  ExpressionResult,
+  ExpressionReturnType,
+  MemberCheckFn,
+  SimpleType,
+  TypeMap,
+  canAccessMember,
+} from "./utils";
+import { ExpressionError } from "./expression-error";
+import jsep, { Expression as JsepExpression } from "jsep";
 
 export class ExpressionEvaluator {
   private readonly _context: TypeMap;
@@ -35,10 +36,12 @@ export class ExpressionEvaluator {
   }
 
   public async eval(
-    expression: string | Expression,
+    expression: string | JsepExpression,
   ): Promise<ExpressionResult> {
     return this._evalExpression(
-      typeof expression === "string" ? jsep(expression) : expression,
+      (typeof expression === "string"
+        ? jsep(expression)
+        : expression) as Expression,
     );
   }
 

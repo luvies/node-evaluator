@@ -23,8 +23,7 @@
     "test:ci": "jest --ci --expand",
     "test:watch": "jest --watch",
     "lint": "./node_modules/@luvies/config/scripts/lint.sh",
-    "fix": "./node_modules/@luvies/config/scripts/lint.sh fix",
-    "postinstall": "rm -rf ./node_modules/jsep/typings/*"
+    "fix": "./node_modules/@luvies/config/scripts/lint.sh fix"
   },
   "devDependencies": {
     "@luvies/config": "^3.0.2",

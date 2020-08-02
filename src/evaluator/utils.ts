@@ -8,12 +8,12 @@ export type FunctionType = (
 
 export interface ArrayType extends Array<ExpressionReturnType> {}
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 export type ExpressionReturnType =
   | SimpleType
   | ArrayType
   | FunctionType
   | TypeMap
+  // eslint-disable-next-line @typescript-eslint/ban-types
   | object;
 
 export interface ExpressionResult<T = ExpressionReturnType> {

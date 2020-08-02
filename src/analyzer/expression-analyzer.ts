@@ -1,14 +1,4 @@
 import {
-  EvaluatorOptions,
-  ExpressionError,
-  ExpressionReturnType,
-  SimpleType,
-  canAccessMember,
-} from "../evaluator";
-import { ExpressionAnalysis } from "./expression-analysis";
-import { FunctionCall } from "./function-call";
-import { RuntimeValue } from "./runtime-value";
-import jsep, {
   ArrayExpression,
   BinaryExpression,
   CallExpression,
@@ -19,7 +9,18 @@ import jsep, {
   LogicalExpression,
   MemberExpression,
   UnaryExpression,
-} from "jsep";
+} from "../jsep-types";
+import {
+  EvaluatorOptions,
+  ExpressionError,
+  ExpressionReturnType,
+  SimpleType,
+  canAccessMember,
+} from "../evaluator";
+import { ExpressionAnalysis } from "./expression-analysis";
+import { FunctionCall } from "./function-call";
+import { RuntimeValue } from "./runtime-value";
+import jsep, { Expression as JsepExpression } from "jsep";
 
 export class ExpressionAnalyzer {
   private readonly _options?: EvaluatorOptions;
@@ -43,11 +44,13 @@ export class ExpressionAnalyzer {
     this._valueFormatter = valueFormatter ?? evalOpts?.valueFormatter ?? String;
   }
 
-  public analyze(expression: Expression | string): ExpressionAnalysis {
+  public analyze(expression: JsepExpression | string): ExpressionAnalysis {
     this._visited = new WeakSet();
 
     return this._analyzeExpression(
-      typeof expression === "string" ? jsep(expression) : expression,
+      (typeof expression === "string"
+        ? jsep(expression)
+        : expression) as Expression,
     );
   }
 
