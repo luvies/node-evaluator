@@ -1,5 +1,5 @@
-import { FunctionAnalysisConfig } from "../analyzer";
-import { TypeMap } from "../evaluator";
+import type { FunctionAnalysisConfig } from "../analyzer";
+import type { TypeMap } from "../evaluator";
 
 function toString(value: unknown): string {
   return String(value);

@@ -1,4 +1,6 @@
-import {
+import jsep, { Expression as JsepExpression } from "jsep";
+
+import type {
   ArrayExpression,
   BinaryExpression,
   CallExpression,
@@ -11,6 +13,8 @@ import {
   MemberExpression,
   UnaryExpression,
 } from "../jsep-types";
+
+import { ExpressionError } from "./expression-error";
 import {
   ArrayType,
   EvaluatorOptions,
@@ -21,8 +25,6 @@ import {
   TypeMap,
   canAccessMember,
 } from "./utils";
-import { ExpressionError } from "./expression-error";
-import jsep, { Expression as JsepExpression } from "jsep";
 
 export class ExpressionEvaluator {
   private readonly _context: TypeMap;

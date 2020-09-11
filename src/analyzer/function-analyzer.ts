@@ -1,7 +1,8 @@
-import { ExpressionAnalysis } from "./expression-analysis";
+import type { SimpleType } from "../evaluator";
+
+import type { ExpressionAnalysis } from "./expression-analysis";
 import { FunctionArg, FunctionCall } from "./function-call";
 import { RuntimeValue } from "./runtime-value";
-import { SimpleType } from "../evaluator";
 
 export type FunctionArgs<T> = {
   [K in keyof T]: any[];

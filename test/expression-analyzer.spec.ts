@@ -1,10 +1,11 @@
+import jsep from "jsep";
+
 import {
   ExpressionAnalyzer,
   FunctionCall,
   RuntimeValue,
   standardMemberChecks,
 } from "../src";
-import jsep from "jsep";
 
 describe("Expression Analyzer", () => {
   it("analyses simple expressions without context", () => {

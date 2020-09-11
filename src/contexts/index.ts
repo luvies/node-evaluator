@@ -1,9 +1,10 @@
+import type { FunctionAnalysisConfig } from "../analyzer";
+
 import {
   ConvertContext,
   ConvertFunctionArgs,
   convertFunctionAnalysisConfig,
 } from "./convert";
-import { FunctionAnalysisConfig } from "../analyzer";
 import {
   MathContext,
   MathFunctionArgs,

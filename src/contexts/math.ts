@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import { FunctionAnalysisConfig } from "../analyzer";
-import { TypeMap } from "../evaluator";
+import type { FunctionAnalysisConfig } from "../analyzer";
+import type { TypeMap } from "../evaluator";
 
 function sum(args: number[]): number {
   return args.reduce((previousValue, currentValue) => {

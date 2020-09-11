@@ -1,4 +1,4 @@
-import { ExpressionReturnType, MemberCheckFn } from "./utils";
+import type { ExpressionReturnType, MemberCheckFn } from "./utils";
 
 /**
  * Checks whether the identifier exists as an own property on the

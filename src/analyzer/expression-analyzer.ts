@@ -1,4 +1,13 @@
+import jsep, { Expression as JsepExpression } from "jsep";
+
 import {
+  EvaluatorOptions,
+  ExpressionError,
+  ExpressionReturnType,
+  SimpleType,
+  canAccessMember,
+} from "../evaluator";
+import type {
   ArrayExpression,
   BinaryExpression,
   CallExpression,
@@ -10,17 +19,10 @@ import {
   MemberExpression,
   UnaryExpression,
 } from "../jsep-types";
-import {
-  EvaluatorOptions,
-  ExpressionError,
-  ExpressionReturnType,
-  SimpleType,
-  canAccessMember,
-} from "../evaluator";
+
 import { ExpressionAnalysis } from "./expression-analysis";
 import { FunctionCall } from "./function-call";
 import { RuntimeValue } from "./runtime-value";
-import jsep, { Expression as JsepExpression } from "jsep";
 
 export class ExpressionAnalyzer {
   private readonly _options?: EvaluatorOptions;
@@ -246,9 +248,7 @@ export class ExpressionAnalyzer {
 
         const subIdent = this._tryResolveCallIdent(expression.object);
 
-        return [...subIdent, currIdent] as
-          | [RuntimeValue, ...SimpleType[]]
-          | SimpleType[];
+        return [...subIdent, currIdent];
       }
       default:
         return [new RuntimeValue()];

@@ -1,5 +1,5 @@
-import { FunctionAnalysisConfig } from "../analyzer";
-import { TypeMap } from "../evaluator";
+import type { FunctionAnalysisConfig } from "../analyzer";
+import type { TypeMap } from "../evaluator";
 
 function regex(pattern: string, flags?: string): RegExp {
   return new RegExp(pattern, flags);

@@ -1,5 +1,6 @@
-import { ExpressionError } from "../evaluator";
-import { FunctionCall } from "./function-call";
+import type { ExpressionError } from "../evaluator";
+
+import type { FunctionCall } from "./function-call";
 
 export class ExpressionAnalysis {
   public static merge(infos: ExpressionAnalysis[]): ExpressionAnalysis {
